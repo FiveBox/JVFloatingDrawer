@@ -28,6 +28,7 @@ NSString *JVFloatingDrawerSideString(JVFloatingDrawerSide side) {
 @property (nonatomic, strong, readonly) JVFloatingDrawerView *drawerView;
 @property (nonatomic, assign) JVFloatingDrawerSide currentlyOpenedSide;
 @property (nonatomic, strong) UITapGestureRecognizer *toggleDrawerTapGestureRecognizer;
+@property (nonatomic, strong) UIPanGestureRecognizer *toggleDrawerPanGestureRecognizer;
 
 @end
 
@@ -120,15 +121,23 @@ NSString *JVFloatingDrawerSideString(JVFloatingDrawerSide side) {
     self.centerViewController.view.userInteractionEnabled = NO;
     self.toggleDrawerTapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(actionCenterViewContainerTapped:)];
     [self.drawerView.centerViewContainer addGestureRecognizer:self.toggleDrawerTapGestureRecognizer];
+    
+    self.toggleDrawerPanGestureRecognizer = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(actionCenterViewContainerPanned:)];
+    [self.drawerView.centerViewContainer addGestureRecognizer:self.toggleDrawerPanGestureRecognizer];
 }
 
 - (void)restoreGestures {
     [self.drawerView.centerViewContainer removeGestureRecognizer:self.toggleDrawerTapGestureRecognizer];
+    [self.drawerView.centerViewContainer removeGestureRecognizer:self.toggleDrawerPanGestureRecognizer];
     self.toggleDrawerTapGestureRecognizer = nil;
     self.centerViewController.view.userInteractionEnabled = YES;    
 }
 
 - (void)actionCenterViewContainerTapped:(id)sender {
+    [self closeDrawerWithSide:self.currentlyOpenedSide animated:YES completion:nil];
+}
+
+- (void)actionCenterViewContainerPanned:(id)sender {
     [self closeDrawerWithSide:self.currentlyOpenedSide animated:YES completion:nil];
 }
 
